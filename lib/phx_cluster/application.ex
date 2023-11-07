@@ -25,7 +25,7 @@ defmodule PhxCluster.Application do
       PhxClusterWeb.Endpoint,
       # Starts libcluster supervisor
       {Cluster.Supervisor, [topologies, [name: PhxCluster.ClusterSupervisor]]},
-      {Task, fn -> ping_nodes() end}
+      {Task, fn -> PhxCluster.Nodes.ping_nodes() end}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -40,16 +40,5 @@ defmodule PhxCluster.Application do
   def config_change(changed, _new, removed) do
     PhxClusterWeb.Endpoint.config_change(changed, removed)
     :ok
-  end
-
-  defp ping_nodes() do
-    Process.sleep(1_000)
-
-    Node.list()
-    |> Enum.each(fn node ->
-      IO.puts("[#{inspect(Node.self())} -> #{inspect(node)}] #{inspect(Node.ping(node))}")
-    end)
-
-    ping_nodes()
   end
 end
