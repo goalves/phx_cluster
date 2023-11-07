@@ -2,11 +2,16 @@ defmodule PhxCluster.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
+  require Logger
 
   use Application
 
   @impl true
   def start(_type, _args) do
+    topologies = [default: [strategy: Cluster.Strategy.Gossip]]
+
+    Logger.info("Starting application on host #{Node.self() |> inspect()}")
+
     children = [
       PhxClusterWeb.Telemetry,
       PhxCluster.Repo,
@@ -17,7 +22,10 @@ defmodule PhxCluster.Application do
       # Start a worker by calling: PhxCluster.Worker.start_link(arg)
       # {PhxCluster.Worker, arg},
       # Start to serve requests, typically the last entry
-      PhxClusterWeb.Endpoint
+      PhxClusterWeb.Endpoint,
+      # Starts libcluster supervisor
+      {Cluster.Supervisor, [topologies, [name: PhxCluster.ClusterSupervisor]]},
+      {Task, fn -> ping_nodes() end}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -32,5 +40,16 @@ defmodule PhxCluster.Application do
   def config_change(changed, _new, removed) do
     PhxClusterWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp ping_nodes() do
+    Process.sleep(1_000)
+
+    Node.list()
+    |> Enum.each(fn node ->
+      IO.puts("[#{inspect(Node.self())} -> #{inspect(node)}] #{inspect(Node.ping(node))}")
+    end)
+
+    ping_nodes()
   end
 end

@@ -9,15 +9,17 @@ services:
       POSTGRES_PASSWORD: postgres
   app:
     image: phx_cluster:latest
-    hostname: database
+    depends_on:
+      - postgres
     ports:
       - 4000-4010:4000
     environment:
       PHX_SERVER: true
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/phx_cluster_prod
       SECRET_KEY_BASE: UyU2Ro9+3ynvEFMJ9EuK385CE/vc4Ah1lznR1W0akI5aDLd6qVlYGXT23kNbI11V
+      COOKIE: mysupersecretcookie
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 3
     links:
       - postgres
