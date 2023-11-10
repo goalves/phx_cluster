@@ -11,6 +11,8 @@ config :phx_cluster,
   ecto_repos: [PhxCluster.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+config :phx_cluster, PhxCluster.Repo, migration_primary_key: [type: :uuid]
+
 # Configures the endpoint
 config :phx_cluster, PhxClusterWeb.Endpoint,
   url: [host: "localhost"],
