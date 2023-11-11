@@ -9,7 +9,7 @@ import Config
 
 config :phx_cluster,
   ecto_repos: [PhxCluster.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime, binary_id: true]
 
 config :phx_cluster, PhxCluster.Repo, migration_primary_key: [type: :uuid]
 

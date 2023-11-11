@@ -21,6 +21,9 @@
               <small class="bg-brand/5 text-[0.8125rem] ml-3 rounded-full px-2 font-medium leading-6">
                 v<%= Application.spec(:phx_cluster, :vsn) %>
               </small>
+              <small class="rounded-full px-2 leading-6">
+                <%= Node.self() %>
+              </small>
             </h1>
           </ul>
           <ul class="relative z-10 flex items-center gap-4 justify-end">
