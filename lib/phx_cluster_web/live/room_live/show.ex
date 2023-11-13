@@ -5,7 +5,9 @@ defmodule PhxClusterWeb.RoomLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok,
+     socket
+     |> assign(:form, %Chat.Message{})}
   end
 
   @impl true
